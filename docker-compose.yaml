@@ -1,0 +1,74 @@
+version: '3'
+services:
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: servers_to_postgres_laravel
+    restart: unless-stopped
+    tty: true
+    ports:
+      - 8000:8000
+    volumes:
+      - ./:/app
+      - ./php/local.ini:/usr/local/etc/php/conf.d/local.ini
+
+    networks:
+      - app-network
+    depends_on:
+      - postgres
+
+  #Nginx Service
+  webserver:
+    image: nginx:alpine
+    container_name: servers_to_postgres_nginx
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "8080:8080"
+      - "443:443"
+    volumes:
+      - ./:/var/www
+      - ./nginx/conf.d/:/etc/nginx/conf.d/
+    networks:
+      - app-network
+    depends_on:
+      - app
+      - postgres
+
+#  db:
+#    image: mysql:5.7
+#    container_name: servers_to_postgres_mysql
+#    restart: unless-stopped
+#    tty: true
+#    ports:
+#      - "3306:3306"
+#    environment:
+#      MYSQL_ROOT_PASSWORD: nopassword
+#      MYSQL_DATABASE: laravel
+#      MYSQL_USER: root
+#    networks:
+#      - app-network
+
+  postgres:
+    image: postgres
+    container_name: servers_to_postgres_mysql_postgresql
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: nopassword
+      POSTGRES_DB: sylius
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  dbdata:
+    driver: local
