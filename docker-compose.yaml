@@ -53,7 +53,7 @@ services:
 
   postgres:
     image: postgres
-    container_name: servers_to_postgres_mysql_postgresql
+    container_name: servers_to_postgres_database
     restart: unless-stopped
     tty: true
     ports:
@@ -61,7 +61,7 @@ services:
     environment:
       POSTGRES_USER: root
       POSTGRES_PASSWORD: nopassword
-      POSTGRES_DB: sylius
+      POSTGRES_DB: laravel
     networks:
       - app-network
 
